@@ -20,3 +20,4 @@ from (
 where tot_amt >=10000
 </code></pre>
 
+## 과제 1번
