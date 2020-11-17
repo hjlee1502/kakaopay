@@ -1,7 +1,8 @@
 # kakaopay
 
 ## 2번 문제
-```select user_id
+```
+select user_id
 from (
     select user_id, sum(amount) as tot_amt
     from (
