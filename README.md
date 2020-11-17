@@ -1,7 +1,7 @@
 # Kakaopay - Data Scientist 사전과제
 
 ## 과제 2번
-```
+<pre><code>
 select user_id
 from (
     select user_id, sum(amount) as tot_amt
@@ -18,5 +18,5 @@ from (
     group by user_id
     ) aaa
 where tot_amt >=10000
-```
+</code></pre>
 
