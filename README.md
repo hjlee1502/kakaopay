@@ -1,6 +1,6 @@
-# kakaopay
+# Kakaopay - Data Scientist 사전과제
 
-## 2번 문제
+## 과제 2번
 ```
 select user_id
 from (
@@ -19,3 +19,4 @@ from (
     ) aaa
 where tot_amt >=10000
 ```
+
