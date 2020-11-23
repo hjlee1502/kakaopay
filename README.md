@@ -292,3 +292,4 @@ mse_eval('Poly linearRegression', poly_pred, y_test)
 
 ### 예측결과
 <img width="400" src="https://user-images.githubusercontent.com/68849635/99972209-983da380-2de1-11eb-8b93-1a2b044e369f.png">
+
