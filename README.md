@@ -18,6 +18,7 @@ from (
     group by user_id
     ) aaa
 where tot_amt >=10000
+;
 </code></pre>
 
 ## 과제 1번
@@ -86,9 +87,12 @@ df_anal[scale_columns] = scaler.fit_transform(df_anal[scale_columns])
 # =============================================================================
 pearsonr(df_anal.avg_rspnd_ratio, df_anal.use_cnt)
 
+# 결과
 #(0.1873641684586831, 0.0)
-</code></pre>
 
 분석 결과 : 상관분석 결과 p-value는 0이므로 '응답률과 사용횟수 간의 상관관계가 없다' 라는 귀무가설을 기각한다. 따라서 응답률과 사용횟수간의 선형적인 상관관계가 있다.
 상관계수는 약 0.187로 약한 선형성이 있음을 알 수 있다.
+</code></pre>
+
+
 
