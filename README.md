@@ -92,4 +92,200 @@ where tot_amt >=10000
 ;
 </code></pre>
 
+## 과제 3번
+<pre><code>
+# =============================================================================
+# 패키지 로딩 및 옵션 설정
+# =============================================================================
+from datetime import datetime
+from dateutil.relativedelta import relativedelta
+import pandas as pd
+import numpy as np
 
+
+# =============================================================================
+# 데이터 업로드 
+# =============================================================================
+df = pd.read_csv('./OneDrive/housing.csv'
+                 ,names=['CRIM','ZN','INDUS','CHAS','NOX','RM','AGE','DIS','RAD','TAX','PTRATIO','B','LSTAT','MEDV'])
+
+df.describe()
+# =============================================================================
+# 모델 생성 및 검증
+# =============================================================================
+
+# test/ train 데이터 분할 
+from sklearn.model_selection import train_test_split
+x_train, x_test, y_train, y_test = train_test_split(df.drop('MEDV', 1), df['MEDV'])
+
+# 모델별 성능 확인을 위한 함수
+# 모델 평가 지표: MSE(예측값과 실제값의 차이에 대한 제곱에 대하여 평균을 낸 값)
+from sklearn.metrics import mean_absolute_error, mean_squared_error
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+my_predictions = {}
+
+colors = ['r', 'c', 'm', 'y', 'k', 'khaki', 'teal', 'orchid', 'sandybrown',
+          'greenyellow', 'dodgerblue', 'deepskyblue', 'rosybrown', 'firebrick',
+          'deeppink', 'crimson', 'salmon', 'darkred', 'olivedrab', 'olive', 
+          'forestgreen', 'royalblue', 'indigo', 'navy', 'mediumpurple', 'chocolate',
+          'gold', 'darkorange', 'seagreen', 'turquoise', 'steelblue', 'slategray', 
+          'peru', 'midnightblue', 'slateblue', 'dimgray', 'cadetblue', 'tomato'
+         ]
+
+def plot_predictions(name_, pred, actual):
+    df = pd.DataFrame({'prediction': pred, 'actual': y_test})
+    df = df.sort_values(by='actual').reset_index(drop=True)
+
+    plt.figure(figsize=(12, 9))
+    plt.scatter(df.index, df['prediction'], marker='x', color='r')
+    plt.scatter(df.index, df['actual'], alpha=0.7, marker='o', color='black')
+    plt.title(name_, fontsize=15)
+    plt.legend(['prediction', 'actual'], fontsize=12)
+    plt.show()
+    
+def mse_eval(name_, pred, actual):
+    global predictions
+    global colors
+
+    plot_predictions(name_, pred, actual)
+
+    mse = mean_squared_error(pred, actual)
+    my_predictions[name_] = mse
+
+    y_value = sorted(my_predictions.items(), key=lambda x: x[1], reverse=True)
+    
+    df = pd.DataFrame(y_value, columns=['model', 'mse'])
+    print(df)
+    min_ = df['mse'].min() - 10
+    max_ = df['mse'].max() + 10
+    
+    length = len(df)
+    
+    plt.figure(figsize=(10, length))
+    ax = plt.subplot()
+    ax.set_yticks(np.arange(len(df)))
+    ax.set_yticklabels(df['model'], fontsize=15)
+    bars = ax.barh(np.arange(len(df)), df['mse'])
+    
+    for i, v in enumerate(df['mse']):
+        idx = np.random.choice(len(colors))
+        bars[i].set_color(colors[idx])
+        ax.text(v + 2, i, str(round(v, 3)), color='k', fontsize=15, fontweight='bold')
+        
+    plt.title('MSE Error', fontsize=18)
+    plt.xlim(min_, max_)
+    plt.show()
+
+def remove_model(name_):
+    global my_predictions
+    try:
+        del my_predictions[name_]
+    except KeyError:
+        return False
+    return True   
+
+# 모델1) Linear Regression
+from sklearn.linear_model import LinearRegression
+model = LinearRegression(n_jobs=-1)
+model.fit(x_train, y_train)
+pred = model.predict(x_test)
+mse_eval('LinearRegression', pred, y_test)
+
+# 모델2) Ridge
+from sklearn.linear_model import Ridge
+
+# 값이 커질 수록 큰 규제임
+alphas = [100, 10, 1, 0.1, 0.01, 0.001, 0.0001]
+
+for alpha in alphas:
+    ridge = Ridge(alpha=alpha, random_state=42)
+    ridge.fit(x_train, y_train)
+    pred = ridge.predict(x_test)
+    mse_eval('Ridge(alpha={})'.format(alpha), pred, y_test)
+
+# coef에 대한 plot
+def plot_coef(columns, coef):
+    coef_df = pd.DataFrame(list(zip(columns, coef)))
+    coef_df.columns=['feature', 'coef']
+    coef_df = coef_df.sort_values('coef', ascending=False).reset_index(drop=True)
+    
+    fig, ax = plt.subplots(figsize=(9, 7))
+    ax.barh(np.arange(len(coef_df)), coef_df['coef'])
+    idx = np.arange(len(coef_df))
+    ax.set_yticks(idx)
+    ax.set_yticklabels(coef_df['feature'])
+    fig.tight_layout()
+    plt.show()
+    
+plot_coef(x_train.columns, ridge.coef_)
+
+# alpha값에 따른 coef 차이 확인
+ridge_100 = Ridge(alpha=100)
+ridge_100.fit(x_train, y_train)
+ridge_pred_100 = ridge_100.predict(x_test)
+
+ridge_001 = Ridge(alpha=0.001)
+ridge_001.fit(x_train, y_train)
+ridge_pred_001 = ridge_001.predict(x_test)
+
+plot_coef(x_train.columns, ridge_100.coef_)
+plot_coef(x_train.columns, ridge_001.coef_)
+
+
+# 모델3) ElasticNet
+
+# l1_ratio = 0 (L2 규제만 사용).
+# l1_ratio = 1 (L1 규제만 사용).
+# 0 < l1_ratio < 1 (L1 and L2 규제의 혼합사용)
+
+from sklearn.linear_model import ElasticNet
+ratios = [0.2, 0.5, 0.8]
+
+for ratio in ratios:
+    elasticnet = ElasticNet(alpha=0.5, l1_ratio=ratio, random_state=42)
+    elasticnet.fit(x_train, y_train)
+    pred = elasticnet.predict(x_test)
+    mse_eval('ElasticNet(l1_ratio={})'.format(ratio), pred, y_test)
+
+
+# 모델4) Polynomial Features + ElasticNet / Ridge / LinearRegression
+# 다항식의 계수간 상호작용을 통해 새로운 feature를 생성
+    
+from sklearn.preprocessing import PolynomialFeatures
+poly = PolynomialFeatures(degree=2, include_bias=False)
+poly_features = poly.fit_transform(x_train)[0]
+poly_features
+x_train.iloc[0]
+
+from sklearn.preprocessing import StandardScaler, MinMaxScaler, RobustScaler
+from sklearn.pipeline import make_pipeline
+
+# poly+ElasticNet
+poly_pipeline = make_pipeline(
+    PolynomialFeatures(degree=2, include_bias=False),
+    StandardScaler(),
+    ElasticNet(alpha=0.1, l1_ratio=0.2, random_state=42)
+)
+poly_pred = poly_pipeline.fit(x_train, y_train).predict(x_test)
+mse_eval('Poly ElasticNet', poly_pred, y_test)
+
+# poly+Ridge
+poly_pipeline = make_pipeline(
+    PolynomialFeatures(degree=2, include_bias=False),
+    StandardScaler(),
+    Ridge(alpha=0.1, random_state=42)
+)
+poly_pred = poly_pipeline.fit(x_train, y_train).predict(x_test)
+mse_eval('Poly Ridge', poly_pred, y_test)
+
+# poly+LinearRegression
+poly_pipeline = make_pipeline(
+    PolynomialFeatures(degree=2, include_bias=False),
+    StandardScaler(),
+    LinearRegression(n_jobs=-1)
+)
+poly_pred = poly_pipeline.fit(x_train, y_train).predict(x_test)
+mse_eval('Poly linearRegression', poly_pred, y_test)
+</code></pre>
