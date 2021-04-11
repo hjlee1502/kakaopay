@@ -1,10 +1,46 @@
 # 데이터 분석가(Data Analyst) 사전과제
 ## 목차
+* [분석환경](#분석환경)
+* [준비-데이터 업로드](#준비-데이터_업로드)
 * [1번문제](#문제_1)
 * [2번문제](#문제_2)
 * [3번문제](#문제_3)
 * [4번문제](#문제_4)
 ---
+
+### 분석환경
+* 사용언어
+** 분석 Python3.5.1
+** PostgreSQL
+
+
+### 준비-데이터 업로드
+<pre><code>
+CREATE TABLE IF NOT EXISTS ADH.TB_TRANSACTION
+(
+	USER_ID		VARCHAR(10),
+	GENDER 		VARCHAR(1),   
+	AGE 		INT,
+	SVC_TYPE 	VARCHAR(1),  
+	DATE 		TIMESTAMP,
+	TID 		INT,
+	AMOUNT 		INT
+)
+ sortkey (SVC_TYPE)
+;
+
+CREATE TABLE IF NOT EXISTS ADH.TB_USER
+(
+	USER_ID        VARCHAR(10),
+	USER_TYPE      VARCHAR(2),  
+	AMOUNT_TYPE_1  INT,  
+	CNT_TYPE_1     INT, 
+	AMOUNT_TYPE_2  INT,
+	CNT_TYPE_2     INT
+)
+ sortkey (USER_TYPE)
+;
+</code></pre>
 
 ### 문제_1
 #### 주어진 두 데이터를 활용하여 탐색 후 1개 혹은 2개 가설을 수립하고 검정해주세요. 또한, 해당 가설을 수립한 이유와 탐색 과정을 기술해주세요.
@@ -19,8 +55,7 @@
 
 
 ### 문제_4
-#### transaction 데이터에서 동일 유저가 발생시킨 tx에 대해, 해당 tx의 svc_type과 직전 tx의 svc_type별로 평균 경과 기간과, 건수를 집계하는 쿼리를 작성해 주세요.
-(즉, 어떤 유저가 서비스를 이용할 때, 직전에 사용한 서비스가 무엇이며, 얼마의 주기로 사용하는지를 집계해 주시면 됩니다)
+#### transaction 데이터에서 동일 유저가 발생시킨 tx에 대해, 해당 tx의 svc_type과 직전 tx의 svc_type별로 평균 경과 기간과, 건수를 집계하는 쿼리를 작성해 주세요. (즉, 어떤 유저가 서비스를 이용할 때, 직전에 사용한 서비스가 무엇이며, 얼마의 주기로 사용하는지를 집계해 주시면 됩니다)
 
 
 <pre><code>
