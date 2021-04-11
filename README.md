@@ -93,7 +93,7 @@ amt_p0 | amt_p10 | amt_p20 | amt_p30 | amt_p40 | amt_p50 | amt_p60 | amt_p70 | a
 cnt_p0	cnt_p10	cnt_p20	cnt_p30	cnt_p40	cnt_p50	cnt_p60	cnt_p70	cnt_p80	cnt_p90	cnt_p100
 
 
-머리1 | 머리2 | 머리3 | 뚝배기
+amt_p0 | amt_p10 | amt_p20 | amt_p30
 ---- | ---- | ---- | ----
 다리 | 다리1 | 다리2 | 뚝배기깹니다
 금 | 의 | 환 | 향
