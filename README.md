@@ -15,8 +15,8 @@
 ---
 
 ## 데이터업로드
-transaction, user_useage 데이터 업로드
 <pre><code>
+-- TRANSACTION 데이터 업로드
 CREATE TABLE IF NOT EXISTS TB_TRANSACTION
 (
 	USER_ID		VARCHAR(10),
@@ -29,7 +29,7 @@ CREATE TABLE IF NOT EXISTS TB_TRANSACTION
 )
  sortkey (SVC_TYPE)
 ;
-
+-- USER_USAGE 데이터 업로드
 CREATE TABLE IF NOT EXISTS TB_USER_USAGE
 (
 	USER_ID        VARCHAR(10),
@@ -82,7 +82,7 @@ SELECT percentile_disc(0.0) within group (order by AMOUNT_TYPE_1) over() as amt_
      , percentile_disc(0.8) within group (order by CNT_TYPE_1) over() as cnt_p80 
      , percentile_disc(0.9) within group (order by CNT_TYPE_1) over() as cnt_p90 
      , percentile_disc(1.0) within group (order by CNT_TYPE_1) over() as cnt_p100 
-from ADH.TB_USER
+from ADH.TB_USER_USAGE
 limit 1;
 </code></pre>
 
@@ -109,7 +109,7 @@ SELECT grp
 		    when AMOUNT_TYPE_1 < 150000  then '3_15만원 미만'
 		    when AMOUNT_TYPE_1 < 300000  then '4_30만원 미만'
 		    when AMOUNT_TYPE_1 >= 300000 then '5_30만원 이상' end as grp
-          from ADH.TB_USER
+          from ADH.TB_USER_USAGE
 	)
 group by 1
 order by 1
