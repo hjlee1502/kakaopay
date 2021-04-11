@@ -85,8 +85,9 @@ SELECT percentile_disc(0.0) within group (order by AMOUNT_TYPE_1) over() as amt_
 from ADH.TB_USER
 limit 1;
 </code></pre>
+
 amt_p0 | amt_p10 | amt_p20 | amt_p30 | amt_p40 | amt_p50 | amt_p60 | amt_p70 | amt_p80 | amt_p90 | amt_p100
---- | --- | --- | --- | --- | --- | --- | --- | --- | ---
+---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ----
 -26500|1000|5000|24700|46900|74520|118170|183000|289000|509700|21751960
 
 cnt_p0	cnt_p10	cnt_p20	cnt_p30	cnt_p40	cnt_p50	cnt_p60	cnt_p70	cnt_p80	cnt_p90	cnt_p100
