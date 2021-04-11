@@ -10,8 +10,9 @@
 
 ### 분석환경
 * 사용언어
-** 분석 Python3.5.1
-** PostgreSQL
++ 분석 Python3.5.1
++ PostgreSQL
+---
 
 
 ### 준비-데이터 업로드
