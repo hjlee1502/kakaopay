@@ -55,7 +55,7 @@ CREATE TABLE IF NOT EXISTS TB_USER_USAGE
 ## 문제_3
 #### user_usage 데이터에서 금액 혹은 건수의 구간대별 통계를 구하는 쿼리를 2개 작성해 주세요. 각 구간대를 나눈 기준과, 어떤 통계값을 왜 사용했는지 결정한 과정에 대해 설명해 주세요.
 
-금액과 건수를 나누어 통계를 구하고 백분위수를 기준으로 구간대를 나누어 보았음.
+금액/구간별 백분위수를 이용하여 값의 범위를 확인한다.
 
 <pre><code>
 /* type 1 금액,건수의 백분위수 */
@@ -86,19 +86,31 @@ from ADH.TB_USER
 limit 1;
 </code></pre>
 
-구분 |amt_p0 | amt_p10 | amt_p20 | amt_p30 | amt_p40 | amt_p50 | amt_p60 | amt_p70 | amt_p80 | amt_p90 | amt_p100
----- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | 
-금액 | -26500 | 1000 | 5000 | 24700 | 46900 | 74520 | 118170 | 183000 | 289000 | 509700 | 21751960
-건수 | 0 | 1 | 2 | 3 | 4 | 5 | 7 | 9 | 13 | 20 | 147
-
-
-구분 |amt_p0 | amt_p10 | amt_p20 | amt_p30 | amt_p40 | amt_p50 | amt_p60 | amt_p70 | amt_p80 | amt_p90 | amt_p100
----- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | 
-금액 | -26500 | 1000 | 5000 | 24700 | 46900 | 74520 | 118170 | 183000 | 289000 | 509700 | 21751960
+amt_p0 | amt_p10 | amt_p20 | amt_p30 | amt_p40 | amt_p50 | amt_p60 | amt_p70 | amt_p80 | amt_p90 | amt_p100
+---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | 
+-26500 | 1000 | 5000 | 24700 | 46900 | 74520 | 118170 | 183000 | 289000 | 509700 | 21751960
 
 cnt_p0 | cnt_p10 | cnt_p20 | cnt_p30 | cnt_p40 | cnt_p50 | cnt_p60 | cnt_p70 | cnt_p80 | cnt_p90 | cnt_p100
 ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | 
 0 | 1 | 2 | 3 | 4 | 5 | 7 | 9 | 13 | 20 | 147
+
+<pre><code>
+SELECT gb
+	 , count(distinct user_id) as dnt
+	 , round(avg(cast(cnt_type_1 as float)),1) as avg_cnt
+  from (
+		SELECT *
+			 , case when AMOUNT_TYPE_1 < 5000 		then '1_5천원 미만'
+					when AMOUNT_TYPE_1 < 50000 		then '2_5만원 미만'
+					when AMOUNT_TYPE_1 < 150000 	then '3_15만원 미만'
+					when AMOUNT_TYPE_1 < 300000 	then '4_30만원 미만'
+					when AMOUNT_TYPE_1 >= 300000 	then '5_30만원 이상' end as gb
+		 from ADH.TB_USER
+		)
+group by 1
+order by 1
+;
+</code></pre>
 
 ## 문제_4
 #### transaction 데이터에서 동일 유저가 발생시킨 tx에 대해, 해당 tx의 svc_type과 직전 tx의 svc_type별로 평균 경과 기간과, 건수를 집계하는 쿼리를 작성해 주세요. (즉, 어떤 유저가 서비스를 이용할 때, 직전에 사용한 서비스가 무엇이며, 얼마의 주기로 사용하는지를 집계해 주시면 됩니다)
