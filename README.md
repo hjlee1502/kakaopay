@@ -1,7 +1,7 @@
 # 데이터 분석가(Data Analyst) 사전과제
 ## 목차
 * [분석환경](#분석환경)
-* [데이터 업로드](#데이터_업로드)
+* [데이터 업로드](#데이터업로드)
 * [1번문제](#문제_1)
 * [2번문제](#문제_2)
 * [3번문제](#문제_3)
@@ -14,7 +14,7 @@
   + PostgreSQL
 ---
 
-### 데이터 업로드
+### 데이터업로드
 transaction, user_useage 데이터 업로드
 <pre><code>
 CREATE TABLE IF NOT EXISTS TB_TRANSACTION
@@ -58,6 +58,24 @@ CREATE TABLE IF NOT EXISTS TB_USER_USAGE
 
 ### 문제_4
 #### transaction 데이터에서 동일 유저가 발생시킨 tx에 대해, 해당 tx의 svc_type과 직전 tx의 svc_type별로 평균 경과 기간과, 건수를 집계하는 쿼리를 작성해 주세요. (즉, 어떤 유저가 서비스를 이용할 때, 직전에 사용한 서비스가 무엇이며, 얼마의 주기로 사용하는지를 집계해 주시면 됩니다)
+<pre><code>
+select svc_type 				as svc_type_before
+	 , svc_type_after
+	 , round(avg(datediff),1) 	as avg_date_diff
+	 , count(tid) 	 			as tot_cnt
+  from (select *
+		     , cast(datediff('day',date,date_after) as float) as datediff
+		  from (select *
+		             , lead(svc_type) over (partition by user_id order by tid) as svc_type_after
+		             , lead(date) over (partition by user_id order by tid) as date_after
+		          from ADH.TB_TRANSACTION
+		        )
+		where svc_type_after is not null
+		)
+group by 1,2
+order by 1,2
+;
+</code></pre>
 
 
 <pre><code>
