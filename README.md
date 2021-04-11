@@ -1,7 +1,7 @@
 # 데이터 분석가(Data Analyst) 사전과제
 ## 목차
 * [분석환경](#분석환경)
-* [준비-데이터 업로드](#준비-데이터_업로드)
+* [데이터 업로드](#데이터_업로드)
 * [1번문제](#문제_1)
 * [2번문제](#문제_2)
 * [3번문제](#문제_3)
@@ -9,15 +9,15 @@
 ---
 
 ### 분석환경
-* 사용언어
-  + 분석 Python3.5.1
+* Tool
+  + Python3.5.1
   + PostgreSQL
 ---
 
-
-### 준비-데이터 업로드
+### 데이터 업로드
+transaction, user_useage 데이터 업로드
 <pre><code>
-CREATE TABLE IF NOT EXISTS ADH.TB_TRANSACTION
+CREATE TABLE IF NOT EXISTS TB_TRANSACTION
 (
 	USER_ID		VARCHAR(10),
 	GENDER 		VARCHAR(1),   
@@ -30,7 +30,7 @@ CREATE TABLE IF NOT EXISTS ADH.TB_TRANSACTION
  sortkey (SVC_TYPE)
 ;
 
-CREATE TABLE IF NOT EXISTS ADH.TB_USER
+CREATE TABLE IF NOT EXISTS TB_USER_USAGE
 (
 	USER_ID        VARCHAR(10),
 	USER_TYPE      VARCHAR(2),  
@@ -42,6 +42,7 @@ CREATE TABLE IF NOT EXISTS ADH.TB_USER
  sortkey (USER_TYPE)
 ;
 </code></pre>
+---
 
 ### 문제_1
 #### 주어진 두 데이터를 활용하여 탐색 후 1개 혹은 2개 가설을 수립하고 검정해주세요. 또한, 해당 가설을 수립한 이유와 탐색 과정을 기술해주세요.
