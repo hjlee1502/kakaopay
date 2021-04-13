@@ -165,7 +165,7 @@ grp | 유저수 | 평균 금액
 select svc_type			as svc_type_before
      , svc_type_after
      , round(avg(datediff),1) 	as avg_date_diff
-     , count(tid) 	 	as tot_cnt
+     , count(tid) 	 	as tx_cnt
   from (select *
 	     , cast(datediff('day',date,date_after) as float) as datediff
 	  from (select *
@@ -182,7 +182,7 @@ order by 1,2
 
 * 결과
 
-svc_type_before | svc_type_after | avg_date_diff | tot_cnt
+svc_type_before | svc_type_after | avg_date_diff | tx_cnt
 ---- | ---- | ---- | ---- |
 A | A | 5.3 | 47041
 A | B | 7.7 | 6395
